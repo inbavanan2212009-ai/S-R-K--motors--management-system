@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRK Motors Management</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f1f4f8;
+  color:#172033;
+}
+header{
+  background:#101c35;
+  color:white;
+  padding:22px;
+  text-align:center;
+}
+header h1{margin:0;font-size:28px}
+header p{margin:7px 0 0;color:#cbd5e1}
+nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  background:#1e2d4d;
+  padding:10px;
+  gap:8px;
+}
+nav button{
+  border:0;
+  background:#334566;
+  color:white;
+  padding:11px 15px;
+  border-radius:6px;
+  cursor:pointer;
+}
+nav button:hover{background:#e09b26}
+main{max-width:1100px;margin:25px auto;padding:0 15px}
+.page{display:none}
+.page.active{display:block}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+}
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 2px 8px #0001;
+}
+.card h3{margin:0;color:#64748b;font-size:14px}
+.card p{font-size:25px;font-weight:bold;margin:12px 0 0}
+.panel{
+  background:white;
+  margin-top:20px;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 2px 8px #0001;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  margin:7px 0 14px;
+  border:1px solid #cbd5e1;
+  border-radius:6px;
+}
+label{font-weight:bold;font-size:14px}
+.action{
+  background:#e09b26;
+  color:#172033;
+  border:0;
+  padding:12px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{
+  padding:11px;
+  border-bottom:1px solid #e2e8f0;
+  text-align:left;
+}
+th{background:#edf1f7}
+.table-wrap{overflow-x:auto}
+.delete{
+  background:#dc3545;
+  color:white;
+  border:0;
+  padding:7px 10px;
+  border-radius:5px;
+  cursor:pointer;
+}
+footer{text-align:center;padding:25px;color:#64748b}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>SRK MOTORS</h1>
+  <p>Multi-Branded Car Service Centre Management System</p>
+</header>
+
+<nav>
+  <button onclick="showPage('dashboard')">Dashboard</button>
+  <button onclick="showPage('finance')">Finance</button>
+  <button onclick="showPage('customers')">Customers</button>
+  <button onclick="showPage('vehicles')">Vehicles</button>
+  <button onclick="showPage('services')">Services</button>
+  <button onclick="showPage('inventory')">Spare Parts</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="page active">
+  <h2>Business Dashboard</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Revenue</h3>
+      <p id="totalRevenue">₹0</p>
+    </div>
+    <div class="card">
+      <h3>Total Expenses</h3>
+      <p id="totalExpenses">₹0</p>
+    </div>
+    <div class="card">
+      <h3>Net Balance</h3>
+      <p id="netBalance">₹0</p>
+    </div>
+    <div class="card">
+      <h3>Total Transactions</h3>
+      <p id="totalTransactions">0</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Welcome to SRK Motors</h3>
+    <p>Manage your workshop business from one dashboard.</p>
+    <p>Use the menu above to manage your business records.</p>
+  </div>
+</section>
+
+<section id="finance" class="page">
+  <h2>Revenue & Expenses</h2>
+
+  <div class="panel">
+    <form id="financeForm">
+      <label>Transaction Type</label>
+      <select id="type" required>
+        <option value="Revenue">Revenue</option>
+        <option value="Expense">Expense</option>
+      </select>
+
+      <label>Description</label>
+      <input id="description" placeholder="Example: Car service payment" required>
+
+      <label>Customer or Supplier</label>
+      <input id="person" placeholder="Name">
+
+      <label>Amount (₹)</label>
+      <input id="amount" type="number" min="0.01" step="0.01" required>
+
+      <label>Date</label>
+      <input id="date" type="date" required>
+
+      <button class="action" type="submit">Add Transaction</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>Financial Records</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Type</th><th>Description</th>
+            <th>Person</th><th>Amount</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="financeTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="customers" class="page">
+  <h2>Customer Management</h2>
+  <div class="panel">
+    <form id="customerForm">
+      <label>Customer Name</label>
+      <input id="customerName" required>
+      <label>Mobile Number</label>
+      <input id="customerPhone" type="tel" required>
+      <label>Address</label>
+      <input id="customerAddress">
+      <button class="action">Add Customer</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Customer List</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Mobile</th><th>Address</th></tr></thead>
+        <tbody id="customerTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="vehicles" class="page">
+  <h2>Vehicle Management</h2>
+  <div class="panel">
+    <form id="vehicleForm">
+      <label>Vehicle Registration Number</label>
+      <input id="vehicleNumber" required>
+      <label>Vehicle Brand</label>
+      <input id="vehicleBrand" placeholder="BMW, Audi, Benz, etc." required>
+      <label>Model</label>
+      <input id="vehicleModel">
+      <label>Customer Name</label>
+      <input id="vehicleOwner">
+      <button class="action">Add Vehicle</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Vehicle Records</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Number</th><th>Brand</th><th>Model</th><th>Customer</th></tr></thead>
+        <tbody id="vehicleTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="page">
+  <h2>Service Management</h2>
+  <div class="panel">
+    <form id="serviceForm">
+      <label>Vehicle Number</label>
+      <input id="serviceVehicle" required>
+      <label>Service Description</label>
+      <input id="serviceDescription" required>
+      <label>Service Status</label>
+      <select id="serviceStatus">
+        <option>Pending</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+      </select>
+      <button class="action">Add Service Record</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Service Records</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Vehicle</th><th>Description</th><th>Status</th></tr></thead>
+        <tbody id="serviceTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="inventory" class="page">
+  <h2>Spare Parts Inventory</h2>
+  <div class="panel">
+    <form id="inventoryForm">
+      <label>Part Name</label>
+      <input id="partName" required>
+      <label>Quantity</label>
+      <input id="partQuantity" type="number" min="0" required>
+      <label>Price per Part (₹)</label>
+      <input id="partPrice" type="number" min="0" step="0.01" required>
+      <button class="action">Add Spare Part</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>Stock Records</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Part</th><th>Quantity</th><th>Price</th></tr></thead>
+        <tbody id="inventoryTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>© 2026 SRK MOTORS | Business Management System</footer>
+
+<script>
+const getData = key => JSON.parse(localStorage.getItem(key) || "[]");
+const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function money(value){
+  return "₹" + Number(value).toLocaleString("en-IN");
+}
+
+function renderFinance(){
+  const records = getData("finance");
+  let revenue = 0, expenses = 0;
+
+  records.forEach(r => {
+    if(r.type === "Revenue") revenue += Number(r.amount);
+    else expenses += Number(r.amount);
+  });
+
+  document.getElementById("totalRevenue").textContent = money(revenue);
+  document.getElementById("totalExpenses").textContent = money(expenses);
+  document.getElementById("netBalance").textContent = money(revenue-expenses);
+  document.getElementById("totalTransactions").textContent = records.length;
+
+  document.getElementById("financeTable").innerHTML = records.map((r,i)=>`
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.type}</td>
+      <td>${escapeHTML(r.description)}</td>
+      <td>${escapeHTML(r.person)}</td>
+      <td>${money(r.amount)}</td>
+      <td><button class="delete" onclick="deleteFinance(${i})">Delete</button></td>
+    </tr>
+  `).join("");
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+document.getElementById("financeForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const records = getData("finance");
+  records.push({
+    type:document.getElementById("type").value,
+    description:document.getElementById("description").value,
+    person:document.getElementById("person").value,
+    amount:Number(document.getElementById("amount").value),
+    date:document.getElementById("date").value
+  });
+  saveData("finance",records);
+  e.target.reset();
+  renderFinance();
+});
+
+function deleteFinance(i){
+  if(confirm("Delete this transaction?")){
+    const records=getData("finance");
+    records.splice(i,1);
+    saveData("finance",records);
+    renderFinance();
+  }
+}
+
+function setupForm(formId,key,fields,tableId){
+  document.getElementById(formId).addEventListener("submit",e=>{
+    e.preventDefault();
+    const record={};
+    fields.forEach(field=>{
+      record[field]=document.getElementById(field).value;
+    });
+    const data=getData(key);
+    data.push(record);
+    saveData(key,data);
+    e.target.reset();
+    renderTable(key,tableId,fields);
+  });
+  renderTable(key,tableId,fields);
+}
+
+function renderTable(key,tableId,fields){
+  document.getElementById(tableId).innerHTML=getData(key).map(record=>
+    "<tr>"+fields.map(field=>"<td>"+escapeHTML(record[field])+"</td>").join("")+"</tr>"
+  ).join("");
+}
+
+setupForm("customerForm","customers",
+  ["customerName","customerPhone","customerAddress"],"customerTable");
+
+setupForm("vehicleForm","vehicles",
+  ["vehicleNumber","vehicleBrand","vehicleModel","vehicleOwner"],"vehicleTable");
+
+setupForm("serviceForm","services",
+  ["serviceVehicle","serviceDescription","serviceStatus"],"serviceTable");
+
+setupForm("inventoryForm","inventory",
+  ["partName","partQuantity","partPrice"],"inventoryTable");
+
+renderFinance();
+</script>
+
+</body>
+</html>
